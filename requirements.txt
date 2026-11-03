@@ -1,0 +1,5 @@
+pymodbus
+pyserial
+fastapi
+uvicorn[standard]
+httpx
