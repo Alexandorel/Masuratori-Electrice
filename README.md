@@ -11,6 +11,7 @@ pip install -r requirements.txt
 ```
 python server.py --port /dev/ttyUSB0
 ```
+Fara `--port`, portul se alege automat daca e conectat un singur adaptor USB-serial (valabil si pentru `citire_contor.py`).
 
 Documentatie API interactiva: http://localhost:8000/docs
 

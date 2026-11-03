@@ -10,7 +10,8 @@ from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from pymodbus.client import ModbusSerialClient
 
-from citire_contor import OBIECTE, citeste_tot, construieste_blocuri, fmt, ordine_cuvinte
+from citire_contor import (OBIECTE, citeste_tot, construieste_blocuri, fmt, gaseste_port,
+                           ordine_cuvinte)
 
 COLOANE = [o[0] for o in OBIECTE] + ["Durata_viata_%"]
 CSV_PATH = "masuratori.csv"
@@ -93,7 +94,7 @@ def istoric(de_la: str | None = None, pana_la: str | None = None, limita: int = 
 def main():
     global CSV_PATH
     ap = argparse.ArgumentParser()
-    ap.add_argument("--port", required=True)
+    ap.add_argument("--port")
     ap.add_argument("--adresa", type=int, default=2)
     ap.add_argument("--baud", type=int, default=19200)
     ap.add_argument("--paritate", default="E", choices=["E", "O", "N"])
@@ -102,6 +103,7 @@ def main():
     ap.add_argument("--csv", default=CSV_PATH)
     ap.add_argument("--http-port", type=int, default=8000)
     a = ap.parse_args()
+    a.port = a.port or gaseste_port()
     CSV_PATH = a.csv
 
     client = ModbusSerialClient(port=a.port, baudrate=a.baud, parity=a.paritate,
