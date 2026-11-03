@@ -219,6 +219,17 @@ def afiseaza(rez):
         print(f"  {descr[nume]:<45} {nume:<16} {fmt(v) or '—':>14} {unit[nume]}")
 
 
+def gaseste_port():
+    """Fara --port: alege singurul adaptor USB-serial conectat."""
+    from serial.tools import list_ports
+    porturi = [p.device for p in list_ports.comports() if p.vid is not None]
+    if len(porturi) != 1:
+        raise SystemExit(f"Nu pot alege portul automat (gasite: {porturi or 'niciunul'}). "
+                         "Conecteaza adaptorul sau da --port.")
+    print(f"Port gasit automat: {porturi[0]}")
+    return porturi[0]
+
+
 def scan(client):
     print("Caut dispozitive (poate dura)...")
     for unit in range(1, 248):
@@ -229,7 +240,7 @@ def scan(client):
 
 def main():
     ap = argparse.ArgumentParser()
-    ap.add_argument("--port", required=True)
+    ap.add_argument("--port")
     ap.add_argument("--adresa", type=int, default=2)
     ap.add_argument("--baud", type=int, default=19200)
     ap.add_argument("--paritate", default="E", choices=["E", "O", "N"])
@@ -239,6 +250,7 @@ def main():
     ap.add_argument("--scan", action="store_true")
     ap.add_argument("--o-data", action="store_true")
     a = ap.parse_args()
+    a.port = a.port or gaseste_port()
 
     client = ModbusSerialClient(port=a.port, baudrate=a.baud, parity=a.paritate,
                                 stopbits=a.stopbits, bytesize=8, timeout=1)
