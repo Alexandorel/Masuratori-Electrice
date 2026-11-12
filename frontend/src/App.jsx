@@ -111,7 +111,7 @@ export default function App() {
         <Istoric perioada={perioada} setPerioada={alegePerioada} interval={interval}
           aplicaInterval={(deLa, panaLa) => setIntervalTimp({ deLa: deLa + ':00', panaLa: panaLa + ':59' })}
           incarcare={incarcare}>
-          <LocGrafic date={istoric} registre={mod === 'simplu' ? ['P'] : peGrafic} />
+          <LocGrafic date={istoric} registre={mod === 'simplu' ? ['P'] : peGrafic} obiecte={registre} />
         </Istoric>
       </main>
     </div>

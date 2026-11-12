@@ -107,7 +107,11 @@ input[type="search"] { width: 240px; max-width: 100%; }
 /* Istoric */
 .interval { display: flex; flex-wrap: wrap; gap: 14px; align-items: flex-end; background: var(--fundal); border-radius: 12px; padding: 14px; }
 .buton-principal { height: 44px; padding: 0 22px; border: none; border-radius: 8px; background: var(--accent); color: #FFFFFF; font-weight: 600; }
-.loc-grafic { min-height: 300px; border: 2px dashed var(--chenar-camp); border-radius: var(--raza); background: #FAFBFC; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 6px; text-align: center; padding: 16px; }
+.grafice { display: flex; flex-direction: column; gap: 18px; }
+.grafic { margin: 0; padding: 16px 16px 8px; border: 1px solid var(--linie); border-radius: var(--raza); min-width: 0; }
+.grafic figcaption { display: flex; flex-wrap: wrap; gap: 4px 12px; align-items: baseline; justify-content: space-between; margin-bottom: 10px; }
+.grafic h3 { font-size: 1.02em; font-weight: 600; }
+.grafic .unitate { font-size: 0.8em; }
 
 @media (max-width: 600px) {
   .rezumat h1 { font-size: 1.6em; }
