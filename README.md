@@ -15,6 +15,21 @@ Fara `--port`, portul se alege automat daca e conectat un singur adaptor USB-ser
 
 Documentatie API interactiva: http://localhost:8000/docs
 
+**Fara aparat (demo):** acelasi server, dar cu valori false care se schimba in timp. Istoricul se scrie intr-un CSV temporar, nu in `masuratori.csv`.
+```
+python server_demo.py
+```
+
+## Frontend (React)
+
+```
+cd frontend
+npm install
+npm run dev
+```
+
+Daca serverul nu e pe `http://localhost:8000`, creeaza `frontend/.env` cu `VITE_API_URL=http://adresa:port`.
+
 ## Endpoint-uri
 
 | Endpoint | Descriere |
