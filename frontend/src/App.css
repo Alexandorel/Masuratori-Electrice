@@ -1,0 +1,115 @@
+/* Culorile si dimensiunile folosite peste tot; se schimba dintr-un singur loc. */
+:root {
+  --fundal: #F5F6F8;
+  --card: #FFFFFF;
+  --text: #1A2230;
+  --text-slab: #566273;
+  --text-foarte-slab: #8A94A3;
+  --linie: #E3E7ED;
+  --chenar-camp: #C9D1DC;
+  --gri-deschis: #EEF1F5;
+  --accent: #1D5BD8;
+  --ok-fundal: #E8F6EE;
+  --ok-text: #13653A;
+  --rau-fundal: #FFF3E8;
+  --rau-text: #9A3412;
+  --rau-bara: #EA7A2A;
+  --raza: 14px;
+  font-family: Figtree, system-ui, sans-serif;
+  font-size: 17px;
+  color: var(--text);
+  background: var(--fundal);
+}
+
+* { box-sizing: border-box; }
+body { margin: 0; }
+h1, h2, h3, p { margin: 0; }
+button, input, select { font: inherit; color: inherit; }
+button { cursor: pointer; }
+:focus-visible { outline: 3px solid var(--accent); outline-offset: 2px; }
+
+.pagina { max-width: 1280px; margin: 0 auto; padding-inline: 24px; }
+.continut { padding-block: 24px 56px; display: flex; flex-direction: column; gap: 24px; }
+.text-slab { color: var(--text-slab); line-height: 1.5; }
+.mic { font-size: 0.85em; }
+.accent { color: var(--accent); }
+.unitate { font-size: 0.55em; font-weight: 500; color: var(--text-slab); }
+.valoare-mare { font-size: 1.7em; font-weight: 700; margin-top: 4px; }
+.valoare-medie { font-size: 1.45em; font-weight: 700; }
+
+.card { background: var(--card); border: 1px solid var(--linie); border-radius: 18px; }
+.sectiune { display: flex; flex-direction: column; gap: 14px; }
+.card.sectiune { padding: 22px; }
+.sectiune h2 { font-size: 1.3em; font-weight: 700; }
+.sectiune-cap { display: flex; flex-wrap: wrap; gap: 12px; align-items: flex-end; justify-content: space-between; }
+
+/* Antet */
+.antet { background: var(--card); border-bottom: 1px solid var(--linie); }
+.antet-rand { padding-block: 14px; display: flex; flex-wrap: wrap; gap: 14px; align-items: center; justify-content: space-between; }
+.antet-titlu { font-weight: 700; font-size: 1.15em; }
+
+/* Butoane grupate (Simplu/Detaliat, perioade) */
+.segment { display: flex; flex-wrap: wrap; gap: 4px; background: var(--gri-deschis); border-radius: 10px; padding: 4px; }
+.segment button { min-height: 40px; padding: 0 16px; border: none; border-radius: 7px; font-weight: 600; font-size: 0.92em; background: transparent; color: var(--text-slab); }
+.segment button[aria-pressed="true"] { background: var(--card); color: var(--text); box-shadow: 0 1px 2px rgba(26, 34, 48, .18); }
+
+/* Alegerea aparatului */
+.eticheta { display: block; font-size: 0.85em; font-weight: 600; color: var(--text-slab); margin-bottom: 6px; }
+.aparat-rand { display: flex; flex-wrap: wrap; align-items: center; gap: 12px 16px; }
+.aparat-rand select { min-height: 52px; min-width: min(420px, 100%); padding: 0 14px; border: 1px solid var(--chenar-camp); border-radius: 12px; background: var(--card); font-size: 1.05em; font-weight: 600; }
+.stare-ok { color: var(--ok-text); font-weight: 600; font-size: 0.9em; }
+.stare-rau { color: var(--rau-text); font-weight: 600; font-size: 0.9em; }
+
+.avertisment { padding: 16px 18px; border-radius: var(--raza); background: var(--rau-fundal); border: 1px solid #F3C9A6; color: #7A2F0A; line-height: 1.5; }
+
+/* Etichete de stare */
+.eticheta-ok, .eticheta-rau { display: inline-block; padding: 4px 10px; border-radius: 6px; font-weight: 600; font-size: 0.82em; }
+.eticheta-ok { background: var(--ok-fundal); color: var(--ok-text); }
+.eticheta-rau { background: var(--rau-fundal); color: var(--rau-text); }
+
+/* Rezumat */
+.rezumat { padding: 26px; display: flex; flex-wrap: wrap; gap: 26px; align-items: center; }
+.rezumat-text { flex: 1 1 320px; min-width: 0; display: flex; flex-direction: column; align-items: flex-start; gap: 10px; }
+.rezumat h1 { font-size: 2.1em; line-height: 1.15; }
+.grila-2 { flex: 1 1 380px; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
+.cifra { background: var(--fundal); border-radius: 12px; padding: 16px; }
+
+/* Faze */
+.grila-auto { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 14px; }
+.faza { padding: 18px; display: flex; flex-direction: column; gap: 12px; border-radius: var(--raza); }
+.faza-cap { display: flex; align-items: center; justify-content: space-between; }
+.faza h3 { font-size: 1.05em; }
+.faza-valori { display: flex; gap: 24px; }
+.bara { height: 8px; background: var(--gri-deschis); border-radius: 999px; overflow: hidden; }
+.bara-plin { height: 100%; border-radius: 999px; background: var(--accent); transition: width .4s; }
+.bara-rau { background: var(--rau-bara); }
+
+/* Campuri */
+.camp { display: flex; flex-direction: column; gap: 6px; }
+.camp label { font-size: 0.85em; font-weight: 600; }
+.camp input { height: 44px; padding: 0 12px; border: 1px solid var(--chenar-camp); border-radius: 8px; background: var(--card); }
+input[type="search"] { width: 240px; max-width: 100%; }
+
+/* Registre */
+.file { display: flex; gap: 6px; overflow-x: auto; padding-bottom: 2px; }
+.file button { flex: none; min-height: 42px; padding: 0 16px; border-radius: 10px; font-weight: 600; font-size: 0.92em; white-space: nowrap; background: var(--card); border: 1px solid var(--chenar-camp); }
+.file button[aria-selected="true"] { background: var(--accent); border-color: var(--accent); color: #FFFFFF; }
+.gol { padding: 28px 16px; text-align: center; color: var(--text-slab); background: var(--fundal); border-radius: 12px; }
+.grila-registre { display: grid; grid-template-columns: repeat(auto-fill, minmax(210px, 1fr)); gap: 12px; }
+.registru { border: 1px solid var(--linie); border-radius: 12px; padding: 14px 16px; display: flex; flex-direction: column; gap: 4px; }
+.registru.bifat { border: 2px solid var(--accent); padding: 13px 15px; }
+.registru-nume { font-size: 0.92em; color: #3A4555; }
+.registru-jos { display: flex; justify-content: space-between; align-items: center; gap: 8px; margin-top: 6px; padding-top: 6px; border-top: 1px solid var(--gri-deschis); }
+.cod { font-family: 'JetBrains Mono', monospace; font-size: 0.72em; color: var(--text-foarte-slab); }
+.bifa { display: flex; align-items: center; gap: 6px; min-height: 36px; font-size: 0.85em; color: #3A4555; cursor: pointer; }
+.bifa input { width: 18px; height: 18px; margin: 0; accent-color: var(--accent); }
+
+/* Istoric */
+.interval { display: flex; flex-wrap: wrap; gap: 14px; align-items: flex-end; background: var(--fundal); border-radius: 12px; padding: 14px; }
+.buton-principal { height: 44px; padding: 0 22px; border: none; border-radius: 8px; background: var(--accent); color: #FFFFFF; font-weight: 600; }
+.loc-grafic { min-height: 300px; border: 2px dashed var(--chenar-camp); border-radius: var(--raza); background: #FAFBFC; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 6px; text-align: center; padding: 16px; }
+
+@media (max-width: 600px) {
+  .rezumat h1 { font-size: 1.6em; }
+  .grila-2 { grid-template-columns: minmax(0, 1fr); }
+}
