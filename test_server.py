@@ -1,12 +1,17 @@
-"""Rulare: python test_server.py  (fara hardware: Modbus e inlocuit cu registre false)"""
+"""Rulare: docker compose up -d, apoi python test_server.py
+(fara hardware: Modbus e inlocuit cu registre false; scrie doar in baza masuratori_test)"""
 import os
 import struct
 import tempfile
 
-from fastapi.testclient import TestClient
+import db
 
-import citire_contor
-import server
+db.URL = "postgresql://masuratori:masuratori@localhost:5432/masuratori_test"
+
+from fastapi.testclient import TestClient  # noqa: E402
+
+import citire_contor  # noqa: E402
+import server  # noqa: E402
 
 
 class Stop(Exception):
@@ -18,6 +23,25 @@ def registre_false(client, adresa, count, unit):
         return [1, 1]
     hi, lo = struct.unpack(">HH", struct.pack(">f", 230.5))
     return [lo, hi] * (count // 2) + [0] * (count % 2)
+
+
+def test_migrari():
+    db.migreaza()
+    with db.conecteaza() as con:
+        tabele = {r[0] for r in con.execute("SELECT tablename FROM pg_tables WHERE schemaname='public'")}
+    assert {"utilizatori", "sesiuni", "masuratori", "alembic_version"} <= tabele, tabele
+    db.migreaza()  # a doua oara nu face nimic si nu pica
+
+
+def test_fara_postgres():
+    url, db.URL = db.URL, "postgresql://x:x@localhost:1/x"
+    try:
+        db.migreaza()
+        assert False, "trebuia SystemExit"
+    except SystemExit as e:
+        assert "docker compose up -d" in str(e)
+    finally:
+        db.URL = url
 
 
 def test():
@@ -44,4 +68,6 @@ def test():
 
 
 if __name__ == "__main__":
-    test()
+    test_migrari()
+    test_fara_postgres()
+    print("OK")
