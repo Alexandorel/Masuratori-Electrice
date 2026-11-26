@@ -132,9 +132,20 @@ def test_bucla_supravietuieste_bazei_cazute():
         assert con.execute("SELECT count(*) FROM masuratori").fetchone()[0] == 1
 
 
+def test_demo_nu_scrie_in_baza_reala():
+    import server_demo
+    url, db.URL = db.URL, "postgresql://u:p@gazda:5432/masuratori"  # ca si cum DATABASE_URL arata spre baza reala
+    try:
+        server_demo.alege_baza_demo()
+        assert db.URL == "postgresql://u:p@gazda:5432/masuratori_demo", db.URL
+    finally:
+        db.URL = url
+
+
 if __name__ == "__main__":
     test_migrari()
     test_fara_postgres()
+    test_demo_nu_scrie_in_baza_reala()
     goleste()
     c = TestClient(server.app)
     test_auth(c)
