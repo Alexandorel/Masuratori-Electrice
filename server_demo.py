@@ -1,15 +1,15 @@
 """Server demo, fara aparat: aceleasi endpoint-uri ca server.py, dar cu valori false care se schimba.
 Rulare: python server_demo.py  ->  http://localhost:8000/docs
-Istoricul se scrie intr-un CSV temporar, ca sa nu amestece date false in masuratori.csv."""
+Istoricul se scrie in baza masuratori_demo, ca sa nu amestece date false in baza reala."""
 import math
 import os
 import random
-import tempfile
 import threading
 import time
 
 import uvicorn
 
+import db
 import server
 
 PORNIRE = time.time()
@@ -44,7 +44,9 @@ def valori_false(*_):
 def main():
     server.ordine_cuvinte = lambda client, unit: (True, True)  # nu exista aparat de interogat
     server.citeste_tot = valori_false
-    server.CSV_PATH = os.path.join(tempfile.mkdtemp(), "demo.csv")
+    if "DATABASE_URL" not in os.environ:
+        db.URL = db.URL.rsplit("/", 1)[0] + "/masuratori_demo"
+    db.migreaza()
     threading.Thread(target=server.bucla_citire, args=(None, 2, 2.0), daemon=True).start()
     uvicorn.run(server.app, host="127.0.0.1", port=8000)
 

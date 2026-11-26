@@ -63,6 +63,7 @@ export default function App() {
 
   // Ultima citire, ceruta periodic; intervalul se opreste cand componenta dispare.
   useEffect(() => {
+    if (!utilizator) return
     const citeste = () =>
       api.curent()
         .then((c) => { setCitire(c); setEroare(false) })
@@ -70,10 +71,11 @@ export default function App() {
     citeste()
     const id = setInterval(citeste, INTERVAL_CITIRE_MS)
     return () => clearInterval(id)
-  }, [adresa])
+  }, [adresa, utilizator])
 
   // Istoricul se cere din nou de fiecare data cand se schimba intervalul.
   useEffect(() => {
+    if (!utilizator) return
     let anulat = false
     setIncarcare(true)
     api.istoric(interval.deLa, interval.panaLa)
@@ -82,7 +84,7 @@ export default function App() {
       .finally(() => { if (!anulat) setIncarcare(false) })
     // Daca utilizatorul schimba intervalul inainte sa vina raspunsul, ignoram raspunsul vechi.
     return () => { anulat = true }
-  }, [interval])
+  }, [interval, utilizator])
 
   async function deconectare() {
     await api.logout().catch(() => {})

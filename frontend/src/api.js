@@ -2,7 +2,8 @@
 const BAZA = import.meta.env.VITE_API_URL ?? 'http://localhost:8000'
 
 async function cere(cale) {
-  const r = await fetch(BAZA + cale)
+  const token = localStorage.getItem('token')
+  const r = await fetch(BAZA + cale, { headers: token ? { Authorization: `Bearer ${token}` } : {} })
   if (!r.ok) throw new Error(`${cale}: ${r.status}`)
   return r.json()
 }
