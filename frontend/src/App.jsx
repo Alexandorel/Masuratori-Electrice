@@ -10,6 +10,7 @@ import Registre from './components/Registre'
 import Istoric from './components/Istoric'
 import LocGrafic from './components/LocGrafic'
 import './App.css'
+import Autentificare from './components/Autentificare'
 
 const INTERVAL_CITIRE_MS = 2000
 // Daca ultima citire e mai veche de atat, consideram ca aparatul nu mai raspunde.
@@ -30,6 +31,8 @@ function calculeazaInterval(perioada) {
 }
 
 export default function App() {
+  const [utilizator, setUtilizator] = useState(null)
+  const [verificareAuth, setVerificareAuth] = useState(true)
   const [mod, setMod] = useState('simplu')
   const [adresa, setAdresa] = useState(APARATE[0].adresa)
   const [registre, setRegistre] = useState([])
@@ -40,6 +43,18 @@ export default function App() {
   const [istoric, setIstoric] = useState([])
   const [incarcare, setIncarcare] = useState(false)
   const [peGrafic, setPeGrafic] = useState(['P'])
+
+  // La pornirea aplicatiei verificam daca token-ul salvat mai este valid pe server.
+  useEffect(() => {
+    if (!localStorage.getItem('token')) {
+      setVerificareAuth(false)
+      return
+    }
+    api.me()
+      .then((r) => setUtilizator(r.username))
+      .catch(() => localStorage.removeItem('token'))
+      .finally(() => setVerificareAuth(false))
+  }, [])
 
   // Lista de registre se cere o singura data, la pornire.
   useEffect(() => {
@@ -69,6 +84,12 @@ export default function App() {
     return () => { anulat = true }
   }, [interval])
 
+  async function deconectare() {
+    await api.logout().catch(() => {})
+    localStorage.removeItem('token')
+    setUtilizator(null)
+  }
+  
   function alegePerioada(p) {
     setPerioada(p)
     if (p !== 'custom') setIntervalTimp(calculeazaInterval(p))
@@ -90,9 +111,17 @@ export default function App() {
   const energii = istoric.map((r) => r.valori.Ea_tot_kWh).filter((v) => typeof v === 'number')
   const consumPerioada = energii.length > 1 ? energii[energii.length - 1] - energii[0] : null
 
+  // Cat timp verificam sesiunea nu afisam nici formularul, nici dashboard-ul.
+  if (verificareAuth) return <div className="aplicatie">Se verifica sesiunea...</div>
+  if (!utilizator) return <Autentificare onAutentificat={setUtilizator} />
+
   return (
     <div className="aplicatie">
       <Antet stare={ora ? `${stareText} · ultima citire ${ora}` : stareText} mod={mod} setMod={setMod} />
+      <div style={{ display: 'flex', justifyContent: 'flex-end', gap: 12, padding: '8px 24px', alignItems: 'center' }}>
+        <span>Conectat ca <strong>{utilizator}</strong></span>
+        <button onClick={deconectare}>Deconectare</button>
+      </div>
       <main className="pagina continut">
         <AlegeAparat aparate={APARATE} adresa={adresa} setAdresa={setAdresa} conectat={conectat} stareText={stareText} />
 

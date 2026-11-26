@@ -5,10 +5,10 @@ import os
 import threading
 import time
 from datetime import datetime
-
 from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from pymodbus.client import ModbusSerialClient
+from auth import router as auth_router
 
 from citire_contor import (OBIECTE, citeste_tot, construieste_blocuri, fmt, gaseste_port,
                            ordine_cuvinte)
@@ -17,7 +17,15 @@ COLOANE = [o[0] for o in OBIECTE] + ["Durata_viata_%"]
 CSV_PATH = "masuratori.csv"
 
 app = FastAPI(title="Contor Eaton PXR")
-app.add_middleware(CORSMiddleware, allow_origins=["*"], allow_methods=["GET"])
+# Permitem toate metodele (inclusiv POST pentru auth) si header-ul Authorization.
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+# Atasam rutele de autentificare (/api/auth/register, /login, /me, /logout).
+app.include_router(auth_router)
 
 ultima = {"timp": None, "valori": None}
 lacat = threading.Lock()

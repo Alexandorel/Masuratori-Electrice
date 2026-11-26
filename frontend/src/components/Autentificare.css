@@ -1,0 +1,166 @@
+.auth-container {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  background-color: #f4f5f7;
+}
+
+.auth-box {
+  width: 100%;
+  max-width: 360px;
+  background: #fff;
+  border: 1px solid #d9dde3;
+  border-radius: 8px;
+  padding: 28px 24px;
+}
+
+.auth-titlu {
+  margin: 0 0 4px 0;
+  font-size: 20px;
+  color: #1f2933;
+}
+
+.auth-subtitlu {
+  margin: 0 0 20px 0;
+  font-size: 13px;
+  color: #616e7c;
+}
+
+.auth-form {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.auth-rand {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.auth-rand label {
+  font-size: 13px;
+  font-weight: 500;
+  color: #3e4c59;
+}
+
+.auth-rand input {
+  padding: 9px 10px;
+  border: 1px solid #cbd2d9;
+  border-radius: 5px;
+  font-size: 14px;
+  color: #1f2933;
+}
+
+.auth-rand input:focus {
+  outline: none;
+  border-color: #334e68;
+}
+
+.auth-parola-wrap {
+  display: flex;
+  gap: 6px;
+}
+
+.auth-parola-wrap input {
+  flex: 1;
+}
+
+.auth-btn-vezi {
+  padding: 0 10px;
+  border: 1px solid #cbd2d9;
+  border-radius: 5px;
+  background: #f8f9fa;
+  color: #52606d;
+  font-size: 12px;
+  cursor: pointer;
+}
+
+.auth-btn-vezi:hover {
+  background: #e4e7eb;
+}
+
+.auth-btn-submit {
+  margin-top: 4px;
+  padding: 10px;
+  border: none;
+  border-radius: 5px;
+  background-color: #243b53;
+  color: #fff;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+}
+
+.auth-btn-submit:hover:not(:disabled) {
+  background-color: #102a43;
+}
+
+.auth-btn-submit:disabled {
+  opacity: 0.6;
+  cursor: default;
+}
+
+.auth-eroare {
+  padding: 8px 10px;
+  border-radius: 5px;
+  background: #fee2e2;
+  color: #991b1b;
+  font-size: 13px;
+}
+
+.auth-succes {
+  padding: 8px 10px;
+  border-radius: 5px;
+  background: #dcfce7;
+  color: #166534;
+  font-size: 13px;
+}
+
+.auth-schimba {
+  margin-top: 18px;
+  padding-top: 14px;
+  border-top: 1px solid #e4e7eb;
+  text-align: center;
+  font-size: 13px;
+  color: #52606d;
+}
+
+.auth-schimba button {
+  background: none;
+  border: none;
+  color: #243b53;
+  font-weight: 600;
+  cursor: pointer;
+  padding: 0;
+  margin-left: 4px;
+  text-decoration: underline;
+}
+
+.bara-utilizator {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  gap: 12px;
+  padding: 8px 20px;
+  font-size: 13px;
+  background: #f8f9fa;
+  border-bottom: 1px solid #e4e7eb;
+  color: #3e4c59;
+}
+
+.bara-utilizator button {
+  padding: 5px 10px;
+  border: 1px solid #cbd2d9;
+  border-radius: 5px;
+  background: #fff;
+  color: #3e4c59;
+  font-size: 12px;
+  cursor: pointer;
+}
+
+.bara-utilizator button:hover {
+  background: #f1f5f9;
+}
