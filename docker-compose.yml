@@ -1,0 +1,16 @@
+# PostgreSQL pentru dezvoltare: docker compose up -d
+services:
+  db:
+    image: postgres:17
+    environment:
+      POSTGRES_USER: masuratori
+      POSTGRES_PASSWORD: masuratori  # doar pentru dezvoltare locala
+      POSTGRES_DB: masuratori
+    ports:
+      - "5432:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+      - ./docker/init.sql:/docker-entrypoint-initdb.d/init.sql:ro
+
+volumes:
+  pgdata:
