@@ -2,44 +2,16 @@
 import hashlib
 import hmac
 import secrets
-import sqlite3
 from datetime import datetime
 
-from fastapi import APIRouter, Header, HTTPException
+from fastapi import APIRouter, Depends, Header, HTTPException
+from psycopg.errors import UniqueViolation
+from psycopg.rows import dict_row
 from pydantic import BaseModel
 
-DB_PATH = "utilizatori.db"
+import db
+
 router = APIRouter(prefix="/api/auth", tags=["auth"])
-
-
-def get_db():
-    """Deschide conexiunea la SQLite si returneaza randurile ca dictionare (acces dupa numele coloanei)."""
-    conn = sqlite3.connect(DB_PATH)
-    conn.row_factory = sqlite3.Row
-    return conn
-
-
-def init_db():
-    """Creeaza tabelele la pornirea serverului daca nu exista deja."""
-    with get_db() as conn:
-        conn.execute("""
-            CREATE TABLE IF NOT EXISTS utilizatori (
-                id INTEGER PRIMARY KEY AUTOINCREMENT,
-                username TEXT UNIQUE NOT NULL,
-                parola_hash TEXT NOT NULL,
-                salt TEXT NOT NULL
-            )
-        """)
-        conn.execute("""
-            CREATE TABLE IF NOT EXISTS sesiuni (
-                token TEXT PRIMARY KEY,
-                username TEXT NOT NULL,
-                creat_la TEXT NOT NULL
-            )
-        """)
-
-
-init_db()
 
 
 def hash_parola(parola: str, salt: str) -> str:
@@ -66,12 +38,12 @@ def register(date: DateAuth):
     parola_hash = hash_parola(date.parola, salt)
 
     try:
-        with get_db() as conn:
+        with db.conecteaza() as conn:
             conn.execute(
-                "INSERT INTO utilizatori (username, parola_hash, salt) VALUES (?, ?, ?)",
+                "INSERT INTO utilizatori (username, parola_hash, salt) VALUES (%s, %s, %s)",
                 (username, parola_hash, salt),
             )
-    except sqlite3.IntegrityError:
+    except UniqueViolation:
         raise HTTPException(409, "Acest nume de utilizator exista deja.")
 
     return {"mesaj": "Cont creat cu succes.", "username": username}
@@ -80,9 +52,9 @@ def register(date: DateAuth):
 @router.post("/login")
 def login(date: DateAuth):
     username = date.username.strip()
-    with get_db() as conn:
-        user = conn.execute(
-            "SELECT username, parola_hash, salt FROM utilizatori WHERE username = ?",
+    with db.conecteaza() as conn:
+        user = conn.cursor(row_factory=dict_row).execute(
+            "SELECT username, parola_hash, salt FROM utilizatori WHERE username = %s",
             (username,),
         ).fetchone()
 
@@ -93,28 +65,32 @@ def login(date: DateAuth):
         # Generam un token de sesiune si il salvam in baza de date.
         token = secrets.token_hex(32)
         conn.execute(
-            "INSERT INTO sesiuni (token, username, creat_la) VALUES (?, ?, ?)",
-            (token, user["username"], datetime.now().isoformat(timespec="seconds")),
+            "INSERT INTO sesiuni (token, username, creat_la) VALUES (%s, %s, %s)",
+            (token, user["username"], datetime.now().replace(microsecond=0)),
         )
 
     return {"token": token, "username": user["username"]}
 
 
-@router.get("/me")
-def me(authorization: str | None = Header(default=None)):
-    """Verifica daca token-ul din header-ul 'Authorization: Bearer <token>' este valid."""
+def utilizator_curent(authorization: str | None = Header(default=None)) -> str:
+    """Verifica daca token-ul din header-ul 'Authorization: Bearer <token>' este valid; intoarce username-ul."""
     if not authorization or not authorization.startswith("Bearer "):
         raise HTTPException(401, "Neautentificat.")
     token = authorization.removeprefix("Bearer ").strip()
 
-    with get_db() as conn:
+    with db.conecteaza() as conn:
         sesiune = conn.execute(
-            "SELECT username FROM sesiuni WHERE token = ?", (token,)
+            "SELECT username FROM sesiuni WHERE token = %s", (token,)
         ).fetchone()
 
     if not sesiune:
         raise HTTPException(401, "Sesiune expirata sau invalida.")
-    return {"username": sesiune["username"]}
+    return sesiune[0]
+
+
+@router.get("/me")
+def me(username: str = Depends(utilizator_curent)):
+    return {"username": username}
 
 
 @router.post("/logout")
@@ -122,6 +98,6 @@ def logout(authorization: str | None = Header(default=None)):
     """Sterge sesiunea curenta din baza de date (invalideaza token-ul)."""
     if authorization and authorization.startswith("Bearer "):
         token = authorization.removeprefix("Bearer ").strip()
-        with get_db() as conn:
-            conn.execute("DELETE FROM sesiuni WHERE token = ?", (token,))
+        with db.conecteaza() as conn:
+            conn.execute("DELETE FROM sesiuni WHERE token = %s", (token,))
     return {"mesaj": "Delogat cu succes."}

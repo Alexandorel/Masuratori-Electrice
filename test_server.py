@@ -44,6 +44,25 @@ def test_fara_postgres():
         db.URL = url
 
 
+def goleste():
+    with db.conecteaza() as con:
+        con.execute("TRUNCATE utilizatori, sesiuni, masuratori")
+
+
+def test_auth(c):
+    assert c.post("/api/auth/register", json={"username": " ana ", "parola": "secret1"}).status_code == 201
+    assert c.post("/api/auth/register", json={"username": "ana", "parola": "secret1"}).status_code == 409
+    assert c.post("/api/auth/register", json={"username": "ab", "parola": "secret1"}).status_code == 400
+    assert c.post("/api/auth/login", json={"username": "ana", "parola": "gresit"}).status_code == 401
+    r = c.post("/api/auth/login", json={"username": "ana", "parola": "secret1"}).json()
+    h = {"Authorization": f"Bearer {r['token']}"}
+    assert r["username"] == "ana" and c.get("/api/auth/me", headers=h).json() == {"username": "ana"}
+    c.post("/api/auth/logout", headers=h)
+    assert c.get("/api/auth/me", headers=h).status_code == 401
+    with db.conecteaza() as con:
+        assert con.execute("SELECT count(*) FROM utilizatori").fetchone()[0] == 1
+
+
 def test():
     citire_contor.citeste = registre_false
     server.CSV_PATH = os.path.join(tempfile.mkdtemp(), "m.csv")
@@ -70,4 +89,6 @@ def test():
 if __name__ == "__main__":
     test_migrari()
     test_fara_postgres()
+    goleste()
+    test_auth(TestClient(server.app))
     print("OK")
